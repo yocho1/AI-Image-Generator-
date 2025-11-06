@@ -12,4 +12,22 @@ It connects to **Google Gemini API** to enhance prompts intelligently before gen
 - 🖼️ **Instant Image Generation** – Fetches realistic sample images (can integrate with real AI image APIs later)  
 - ⚡ **Full-Stack Setup** – Flask backend + React frontend  
 - 🎨 **Responsive UI** – Built with TailwindCSS  
-- 🔁 **Live Feedback** – Loading spinner, success animation, and image display 
+- 🔁 **Live Feedback** – Loading spinner, success animation, and image display
+🪶 Technologies Used
+
+## 🚀 Backend:
+
+Python, Flask
+Google Gemini API (google-generativeai)
+
+## 🚀 Frontend:
+
+React + Vite
+TailwindCSS
+Axios
+
+👨‍💻 Author
+
+Achraf Lachgar
+AI Developer
+💼 Full-Stack | 🧠 AI Integration | 🌐 React & Flask Expert
