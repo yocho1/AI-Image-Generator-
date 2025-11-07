@@ -41,44 +41,37 @@ Python (v3.8 or higher)
 
 Google Gemini API key
 
-
-
 Installation
 Clone the repository
-
 
 git clone https://github.com/YOUR_USERNAME/AI-Image-Generator.git
 cd AI-Image-Generator
 Backend Setup
 
-
 cd backend
 pip install -r requirements.txt
 Frontend Setup
-
 
 cd ../frontend
 npm install
 Environment Configuration
 
-
 # Backend - Create .env file in backend directory
+
 echo "GEMINI_API_KEY=your_gemini_api_key_here" > backend/.env
 
-# Frontend - Create .env file in frontend directory  
-echo "PORT=3001" > frontend/.env
+# Frontend - Create .env file in frontend directory
 
+echo "PORT=3001" > frontend/.env
 
 Running the Application
 Start the Backend Server
-
 
 cd backend
 python app.py
 Backend runs on http://127.0.0.1:5002
 
 Start the Frontend Development Server
-
 
 cd frontend
 npm start
