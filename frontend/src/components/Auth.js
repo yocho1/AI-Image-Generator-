@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
+import { authAPI } from '../services/api'
 
-const Auth = ({ onLogin, onSwitchMode }) => {
+const Auth = ({ onLogin }) => {
   const [isLogin, setIsLogin] = useState(true)
   const [formData, setFormData] = useState({
     username: '',
@@ -16,26 +17,16 @@ const Auth = ({ onLogin, onSwitchMode }) => {
     setError('')
 
     try {
-      const endpoint = isLogin ? '/api/login' : '/api/register'
-      const response = await fetch(`http://127.0.0.1:5002${endpoint}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      })
+      const endpoint = isLogin ? authAPI.login : authAPI.register
+      const response = await endpoint(formData)
 
-      const data = await response.json()
-
-      if (response.ok) {
-        localStorage.setItem('token', data.access_token)
-        localStorage.setItem('user', JSON.stringify(data.user))
-        onLogin(data.user)
-      } else {
-        setError(data.error || 'Authentication failed')
+      if (response.data) {
+        localStorage.setItem('token', response.data.access_token)
+        localStorage.setItem('user', JSON.stringify(response.data.user))
+        onLogin(response.data.user)
       }
     } catch (err) {
-      setError('Network error. Please try again.')
+      setError(err.response?.data?.error || 'Authentication failed')
     } finally {
       setLoading(false)
     }

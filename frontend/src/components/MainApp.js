@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
+import { imageAPI } from '../services/api'
 
-// Simple SVG icons
+// SVG Icons (keep your existing icons)
 const Sparkles = () => (
   <svg
     className='w-6 h-6'
@@ -81,51 +82,32 @@ const Zap = () => (
   </svg>
 )
 
+const Heart = ({ filled = false }) => (
+  <svg
+    className={`w-5 h-5 ${
+      filled ? 'text-red-500 fill-current' : 'text-gray-400'
+    }`}
+    viewBox='0 0 24 24'
+  >
+    <path
+      strokeLinecap='round'
+      strokeLinejoin='round'
+      strokeWidth={2}
+      d='M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z'
+    />
+  </svg>
+)
+
 const MainApp = ({ user }) => {
   const [prompt, setPrompt] = useState('')
+  const [style, setStyle] = useState('realistic')
   const [loading, setLoading] = useState(false)
   const [result, setResult] = useState(null)
   const [error, setError] = useState('')
 
-  const validateToken = () => {
-    const token = localStorage.getItem('token')
-    if (!token) {
-      return { valid: false, error: 'No token found' }
-    }
-
-    // Simple JWT validation (check if it's a properly formatted JWT)
-    const parts = token.split('.')
-    if (parts.length !== 3) {
-      return { valid: false, error: 'Invalid token format' }
-    }
-
-    try {
-      // Try to parse the payload
-      const payload = JSON.parse(atob(parts[1]))
-      const now = Date.now() / 1000
-
-      if (payload.exp && payload.exp < now) {
-        return { valid: false, error: 'Token expired' }
-      }
-
-      return { valid: true, payload }
-    } catch (e) {
-      return { valid: false, error: 'Invalid token' }
-    }
-  }
-
   const generateImage = async () => {
     if (!prompt.trim()) {
       setError('Please enter a prompt')
-      return
-    }
-
-    // Validate token first
-    const tokenValidation = validateToken()
-    if (!tokenValidation.valid) {
-      setError(
-        `Authentication error: ${tokenValidation.error}. Please log in again.`
-      )
       return
     }
 
@@ -134,42 +116,40 @@ const MainApp = ({ user }) => {
     setResult(null)
 
     try {
-      const token = localStorage.getItem('token')
-      console.log('Token validation:', tokenValidation)
-
-      const response = await fetch('http://127.0.0.1:5002/api/generate', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ prompt: prompt.trim() }),
+      const response = await imageAPI.generate({
+        prompt: prompt.trim(),
+        style: style,
       })
 
-      console.log('Response status:', response.status)
-
-      const data = await response.json()
-      console.log('Response data:', data)
-
-      if (response.ok) {
-        setResult(data)
-      } else {
-        setError(
-          data.error || `Failed to generate image (Status: ${response.status})`
-        )
-
-        // If it's an auth error, suggest re-login
-        if (response.status === 401 || response.status === 422) {
-          setError((prev) => prev + '. Please try logging in again.')
-        }
-      }
+      setResult(response.data)
     } catch (err) {
-      console.error('API Error:', err)
-      setError(
-        'Failed to connect to the server. Make sure the backend is running on port 5002.'
-      )
+      setError(err.response?.data?.error || 'Failed to generate image')
     } finally {
       setLoading(false)
+    }
+  }
+
+  const addToFavorites = async (imageId) => {
+    try {
+      await imageAPI.addFavorite(imageId)
+      setResult((prev) => ({
+        ...prev,
+        is_favorite: true,
+      }))
+    } catch (err) {
+      console.error('Failed to add to favorites:', err)
+    }
+  }
+
+  const removeFromFavorites = async (imageId) => {
+    try {
+      await imageAPI.removeFavorite(imageId)
+      setResult((prev) => ({
+        ...prev,
+        is_favorite: false,
+      }))
+    } catch (err) {
+      console.error('Failed to remove from favorites:', err)
     }
   }
 
@@ -191,9 +171,17 @@ const MainApp = ({ user }) => {
     }
   }
 
+  const styles = [
+    { value: 'realistic', label: 'Realistic' },
+    { value: 'anime', label: 'Anime' },
+    { value: 'painting', label: 'Painting' },
+    { value: 'cartoon', label: 'Cartoon' },
+    { value: 'minimalist', label: 'Minimalist' },
+  ]
+
   return (
     <div className='min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 py-8 px-4'>
-      <div className='max-w-4xl mx-auto'>
+      <div className='max-w-6xl mx-auto'>
         {/* Header */}
         <div className='text-center mb-12'>
           <div className='flex items-center justify-center gap-3 mb-4'>
@@ -236,6 +224,24 @@ const MainApp = ({ user }) => {
                   />
                 </div>
 
+                <div>
+                  <label className='block text-sm font-medium text-gray-700 mb-2'>
+                    Style
+                  </label>
+                  <select
+                    value={style}
+                    onChange={(e) => setStyle(e.target.value)}
+                    className='input-field'
+                    disabled={loading}
+                  >
+                    {styles.map((styleOption) => (
+                      <option key={styleOption.value} value={styleOption.value}>
+                        {styleOption.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
                 <button
                   onClick={generateImage}
                   disabled={loading || !prompt.trim()}
@@ -243,7 +249,7 @@ const MainApp = ({ user }) => {
                 >
                   {loading ? (
                     <>
-                      <RefreshCw />
+                      <RefreshCw className='animate-spin' />
                       <span>Generating Magic...</span>
                     </>
                   ) : (
@@ -306,11 +312,23 @@ const MainApp = ({ user }) => {
               <>
                 {/* Generated Image */}
                 <div className='card'>
-                  <div className='flex items-center gap-2 mb-4'>
-                    <ImageIcon />
-                    <h2 className='text-xl font-semibold text-gray-800'>
-                      Generated Image
-                    </h2>
+                  <div className='flex items-center justify-between mb-4'>
+                    <div className='flex items-center gap-2'>
+                      <ImageIcon />
+                      <h2 className='text-xl font-semibold text-gray-800'>
+                        Generated Image
+                      </h2>
+                    </div>
+                    <button
+                      onClick={() =>
+                        result.is_favorite
+                          ? removeFromFavorites(result.image_id)
+                          : addToFavorites(result.image_id)
+                      }
+                      className='p-2 hover:bg-gray-100 rounded-lg transition-colors'
+                    >
+                      <Heart filled={result.is_favorite} />
+                    </button>
                   </div>
 
                   <div className='space-y-4'>
