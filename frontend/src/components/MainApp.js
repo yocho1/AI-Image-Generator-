@@ -337,6 +337,7 @@ const MainApp = ({ user }) => {
                         src={result.image_url}
                         alt={result.improved_prompt}
                         className='w-full h-64 md:h-80 object-cover rounded-xl shadow-lg transition-transform duration-300 group-hover:scale-105'
+                        style={{ maxWidth: '100%', height: 'auto' }} // Add this for better responsive handling
                       />
                       <div className='absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 rounded-xl transition-all duration-300 flex items-center justify-center'>
                         <button

@@ -3,6 +3,7 @@ import random
 import hashlib
 import google.generativeai as genai
 from config import Config
+from services.stability_service_clean import StabilityAIService
 
 class GeminiService:
     def __init__(self):
@@ -11,25 +12,21 @@ class GeminiService:
         self.last_request_time = 0
         self.request_cooldown = Config.REQUEST_COOLDOWN
         
+        # Use Stability.ai for image generation
+        self.image_service = StabilityAIService()
+        
         if Config.GEMINI_API_KEY:
             self._initialize_gemini()
     
     def _initialize_gemini(self):
+        """Initialize Gemini for prompt improvement only"""
         try:
             genai.configure(api_key=Config.GEMINI_API_KEY)
-            available_models = genai.list_models()
-            
-            for model in available_models:
-                if 'generateContent' in model.supported_generation_methods:
-                    self.available = True
-                    self.model_name = model.name
-                    print(f"SUCCESS: Gemini API configured with model: {self.model_name}")
-                    break
-            else:
-                print("ERROR: No available Gemini models found")
-                
+            self.model_name = "models/gemini-2.5-flash-latest"
+            self.available = True
+            print("SUCCESS: Gemini Service initialized for prompt enhancement")
         except Exception as e:
-            print(f"WARNING: Gemini API configuration failed: {e}")
+            print(f"ERROR: Gemini Service init failed: {e}")
             self.available = False
     
     def can_make_request(self):
@@ -42,6 +39,7 @@ class GeminiService:
         return False
     
     def improve_prompt(self, prompt):
+        """Improve the prompt using Gemini (text only)"""
         if not self.available or not self.can_make_request():
             return self._improve_prompt_fallback(prompt)
         
@@ -75,6 +73,7 @@ class GeminiService:
             return self._improve_prompt_fallback(prompt)
     
     def _improve_prompt_fallback(self, prompt):
+        """Fallback prompt improvement"""
         descriptive_words = {
             "cute": ["adorable", "charming", "sweet"],
             "baby": ["infant", "newborn", "little one"],
@@ -100,32 +99,8 @@ class GeminiService:
         
         return improved
     
-    def get_image_url(self, prompt):
-        prompt_lower = prompt.lower()
-        
-        image_categories = {
-            'cat': [237, 219, 222, 257, 96],
-            'dog': [1062, 1074, 1080, 1081, 1084],
-            'baby': [1005, 1011, 1012, 1018, 1025],
-            'panda': [1024, 1031, 1035, 1036, 1039],
-            'landscape': [1015, 1016, 1018, 1020, 1021, 1022, 1023, 1028],
-            'portrait': [1005, 1009, 1011, 1012, 1019, 1027]
-        }
-        
-        for category, ids in image_categories.items():
-            if any(word in prompt_lower for word in [category] + self._get_synonyms(category)):
-                return f"https://picsum.photos/id/{random.choice(ids)}/512/512"
-        
-        seed = hashlib.md5(prompt.encode()).hexdigest()[:10]
-        return f"https://picsum.photos/seed/{seed}/512/512"
-    
-    def _get_synonyms(self, word):
-        synonyms = {
-            'cat': ['kitten', 'feline'],
-            'dog': ['puppy', 'canine'],
-            'baby': ['child', 'infant'],
-            'panda': ['bear'],
-            'landscape': ['mountain', 'nature', 'scenery'],
-            'portrait': ['person', 'face', 'people']
-        }
-        return synonyms.get(word, [])
+    def get_image_url(self, prompt, style='realistic'):
+        """
+        Use Stability.ai for real AI image generation
+        """
+        return self.image_service.generate_image(prompt, style)
