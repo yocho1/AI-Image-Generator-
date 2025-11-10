@@ -36,7 +36,12 @@ Images can be saved, favorited, and managed in a personal gallery.
 - Google Gemini API or Stability.ai
 - CORS
 
-**Deployment:**
+## 🌐 Live Demos
 
-- Backend → [Render](https://render.com)
-- Frontend → [Vercel](https://vercel.com)
+### Frontend (Vercel)
+
+🔗 **Live Site:** [ai-image-generator-kappa-three.vercel.app](https://ai-image-generator-kappa-three.vercel.app)
+
+### Backend (Railway)
+
+🔗 **API Base URL:** [peaceful-tenderness-image-ai.up.railway.app](https://peaceful-tenderness-image-ai.up.railway.app)
