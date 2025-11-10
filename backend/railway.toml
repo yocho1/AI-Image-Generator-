@@ -1,6 +1,9 @@
 [build]
-builder = "nixpacks"
-[deploy]
-startCommand = "gunicorn -c gunicorn_config.py app:app"
+command = "cd backend && pip install -r requirements.txt"
+
+[run] 
+command = "cd backend && python app.py"
+
 [env]
-PORT = "10000"
+PORT = "5002"
+FLASK_ENV = "production"
