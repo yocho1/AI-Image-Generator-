@@ -11,6 +11,7 @@ from controllers.auth_controller import AuthController
 from controllers.image_controller import ImageController
 from utils.decorators import jwt_required_custom
 
+
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
@@ -18,7 +19,13 @@ def create_app():
     # Initialize extensions
     db.init_app(app)
     jwt = JWTManager(app)
-    CORS(app)
+    
+    # Flexible CORS for production
+    CORS_ORIGINS = os.getenv('CORS_ORIGINS', 'http://localhost:3000').split(',')
+    if os.getenv('RAILWAY_STATIC_URL'):  # Railway provides this
+        CORS_ORIGINS.append(os.getenv('RAILWAY_STATIC_URL'))
+    
+    CORS(app, resources={r"/api/*": {"origins": CORS_ORIGINS}})
     
     # Initialize services
     gemini_service = GeminiService()

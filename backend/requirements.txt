@@ -10,3 +10,4 @@ stability-sdk==0.4.0
 Pillow==10.0.1
 requests==2.31.0
 sqlalchemy==2.0.23
+psycopg2-binary==2.9.9  # Add this for PostgreSQL
