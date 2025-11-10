@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const API_BASE_URL = 'http://127.0.0.1:5002/api'
+const API_BASE_URL = 'https://peaceful-tenderness-image-ai.up.railway.app/api'
 
 // Create axios instance with default config
 const api = axios.create({
