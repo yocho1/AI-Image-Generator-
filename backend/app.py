@@ -20,8 +20,11 @@ def create_app():
     db.init_app(app)
     jwt = JWTManager(app)
     
-    # Flexible CORS for production
-    CORS_ORIGINS = os.getenv('CORS_ORIGINS', 'http://localhost:3000').split(',')
+       # Enhanced CORS configuration for production
+    CORS_ORIGINS = [
+        'http://localhost:3000',  # Local development
+        'https://ai-image-generator-kappa-three.vercel.app',  # Your Vercel frontend
+    ]
     if os.getenv('RAILWAY_STATIC_URL'):  # Railway provides this
         CORS_ORIGINS.append(os.getenv('RAILWAY_STATIC_URL'))
     
