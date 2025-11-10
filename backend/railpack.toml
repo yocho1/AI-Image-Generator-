@@ -1,0 +1,12 @@
+[build]
+command = "cd backend && pip install -r requirements.txt"
+
+[run]
+command = "cd backend && gunicorn --bind 0.0.0.0:5002 --workers 1 --timeout 120 'app:create_app()'"
+
+[env]
+PORT = "5002"
+FLASK_ENV = "production"
+
+[apt]
+packages = ["python3-dev", "gcc", "g++", "libffi-dev", "libssl-dev", "build-essential"]
