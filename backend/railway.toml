@@ -1,12 +1,11 @@
 [build]
-command = "cd backend && pip install -r requirements.txt"
+command = "cd backend && pip install --use-pep517 --no-cache-dir -r requirements.txt"
 
 [run]
 command = "cd backend && gunicorn -c gunicorn_config.py app:app"
 
 [env]
 PORT = "5002"
-FLASK_ENV = "production"
 
-[python]
-version = "3.11"
+[apt]
+packages = ["python3-dev", "gcc", "g++", "libffi-dev", "libssl-dev", "build-essential"]

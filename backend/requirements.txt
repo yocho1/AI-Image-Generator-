@@ -11,3 +11,6 @@ Pillow==10.0.1
 requests==2.31.0
 sqlalchemy==2.0.23
 psycopg2-binary==2.9.9  # Add this for PostgreSQL
+pyjwt==2.8.0
+werkzeug==2.3.7
+gunicorn==21.2.0
