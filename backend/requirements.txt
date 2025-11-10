@@ -8,11 +8,14 @@ pyjwt==2.8.0
 werkzeug==2.3.7
 gunicorn==21.2.0
 
-# Google AI with specific versions that have better wheel support
+# Core Google AI (let it pull compatible dependencies)
 google-generativeai==0.3.2
-google-ai-generativelanguage==0.3.0
+
+# Explicitly add these to ensure compatibility
 google-api-core==2.11.1
 google-auth==2.23.0
 protobuf==4.24.4
+
+# Use specific grpcio versions known to have good wheel support
 grpcio==1.59.0
-grpcio-tools==1.59.0
+grpcio-status==1.59.0

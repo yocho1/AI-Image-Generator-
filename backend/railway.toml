@@ -1,5 +1,5 @@
 [build]
-command = "cd backend && pip install --use-pep517 --no-cache-dir -r requirements.txt"
+command = "cd backend && pip install --upgrade pip && pip install --use-pep517 -r requirements.txt"
 
 [run]
 command = "cd backend && gunicorn -c gunicorn_config.py app:app"
