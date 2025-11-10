@@ -113,8 +113,10 @@ def create_app():
     
     return app
 
+# Create app instance for Gunicorn
+app = create_app()
+
 if __name__ == '__main__':
-    app = create_app()
     print("STARTING: AI Image Generator Backend with MVC Architecture...")
     print(f"GEMINI AVAILABLE: {GeminiService().available}")
-    app.run(debug=True, host="127.0.0.1", port=5002)
+    app.run(debug=False, host="0.0.0.0", port=5002)
