@@ -1,16 +1,18 @@
 flask==2.3.3
-flask-sqlalchemy==3.0.5
-flask-bcrypt==1.0.1
-flask-jwt-extended==4.5.3
 flask-cors==4.0.0
+flask-jwt-extended==4.5.3
+flask-sqlalchemy==3.1.1
 python-dotenv==1.0.0
-gunicorn==21.2.0
-google-generativeai==0.3.2
-stability-sdk==0.4.0
-Pillow==10.0.1
-requests==2.31.0
-sqlalchemy==2.0.23
-psycopg2-binary==2.9.9  # Add this for PostgreSQL
+pillow==10.0.1
 pyjwt==2.8.0
 werkzeug==2.3.7
 gunicorn==21.2.0
+
+# Google AI with specific versions that have better wheel support
+google-generativeai==0.3.2
+google-ai-generativelanguage==0.3.0
+google-api-core==2.11.1
+google-auth==2.23.0
+protobuf==4.24.4
+grpcio==1.59.0
+grpcio-tools==1.59.0
