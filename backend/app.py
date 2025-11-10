@@ -23,7 +23,7 @@ def create_app():
     # Flexible CORS for production
     CORS_ORIGINS = os.getenv('CORS_ORIGINS', 'http://localhost:3000').split(',')
     if os.getenv('RAILWAY_STATIC_URL'):  # Railway provides this
-        CORS_ORIGINS.append(os.getenv('RAILWAY_STATIC_URL'))
+CORS_ORIGINS.append('ai-image-generator-kappa-three.vercel.app')
     
     CORS(app, resources={r"/api/*": {"origins": CORS_ORIGINS}})
     
